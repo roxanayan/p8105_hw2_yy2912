@@ -37,30 +37,12 @@ prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
 
 ```
 
-lotr_tidy = 
-  bind_rows(fellowship_ring, two_towers, return_king) %>%
-  janitor::clean_names() %>%
-  pivot_longer(
-    female:male,
-    names_to = "sex", 
-    values_to = "words") %>%
-  mutate(race = str_to_lower(race)) %>% 
-  select(movie, everything()) 
-
 
 ```{r}
   prec_data_new = 
   bind_rows(prec_data_2017, prec_data_2018) %>%
   mutate(month = month.name [month] )
 ```
-
-prec_data_new = 
-  bind_rows(prec_data_2017, prec_data_2018) %>%
-  
-prec_data_join=full_join(prec_data_2017, prec_data_2018)%>%
-  mutate(month = month.name [month] )
-```
-
 
 
 
@@ -94,7 +76,9 @@ select("year", "month","close")
 
 ```{r}
 unemployment_data = read_csv(file = "./data/unemployment.csv")%>% 
-    janitor::clean_names() 
+    janitor::clean_names() %>% 
+  mutate(year=as.character(year))
+
 ```  
 ```{r}
 unemployment_new_data = 
@@ -102,11 +86,11 @@ pivot_longer(unemployment_data, jan:dec,names_to = "month", values_to = "%_of_un
 ```
 
 ```{r}
-polsmonth_snp_new=full_join(polsmonth_data, snp_data, by ="month")
+polsmonth_snp_new=left_join(polsmonth_data, snp_data, by =c("year", "month"))
 ```
 
 ```{r}
-unemployment_pols_snp_new=full_join(polsmonth_snp_new,unemployment_new_data)
+unemployment_pols_snp_new=left_join(polsmonth_snp_new,unemployment_new_data, by =c("year", "month"))
 ```
 ### Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
   
