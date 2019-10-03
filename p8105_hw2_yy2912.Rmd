@@ -1,0 +1,123 @@
+---
+title: "p8105_hw2_yy2912.Rmd"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(dplyr)
+```
+## problem 1
+## Load in the trash data
+
+```{r}
+trash_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel",
+                 range= cell_cols("A:N"))%>%
+                janitor::clean_names()%>%
+  drop_na(dumpster)%>%
+  mutate(sports_balls=round(sports_balls, digit=0))%>%
+  as.integer(sports_balls)
+
+                      
+```
+
+```{r}
+prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2017 Precipitation", range = cell_cols("A:B")) %>%
+  janitor::clean_names() %>%
+  mutate("year"='2017')
+```
+
+```{r}
+prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2018 Precipitation", range = cell_cols("A:B")) %>%
+  janitor::clean_names() %>%
+  mutate(year='2018')
+```
+
+```{r}
+prec_data_new=  left_join(prec_data_2017, prec_data_2018, by = "Month")
+month.name
+```
+The number of observations in the dataset (trash_data) is 'r nrow (trash_data)'. 
+
+The number of observations in the dataset (prec_data_new) is 'r nrow (prec_data_new)'. 
+
+the key variables in the dataset 
+
+the total precipitation in 2018 
+
+the median number of sports balls in a dumpster in 2017 is 
+
+## problem 2
+## Load in the fivethrityeight data
+
+```{r}
+polsmonth_data = read_csv(file = "./data/pols-month.csv")%>% 
+separate(mon, c("year", "month", "day"))%>% 
+mutate(month_numeric=as.numeric(month),month_pols=month.name[month_numeric],president='gop','dem')%>% select(-prez_dem, -prez_gop, -day)
+
+```
+
+```{r}
+snp_data = read_csv(file = "./data/snp.csv")%>% 
+separate(date, c("year", "month", "day"))%>%
+mutate(month=month.name[month_numeric=as.numeric(month)])%>% 
+select(-day)%>%
+select("year", "month","close")
+```
+
+```{r}
+unemployment_data = read_csv(file = "./data/unemployment.csv")%>% 
+    janitor::clean_names()
+```
+
+```{r}
+unemployment_new_data = 
+pivot_longer(unemployment_data,Jan:Dec,names_to = "month", values_to = "%_of_unemployment")%>%
+  janitor::clean_names()
+```
+
+```{r}
+polsmonth_snp_new=full_join(polsmonth_data, snp_data)
+```
+
+```{r}
+unemployment_pols_snp_new=full_join(polsmonth_snp_new,unemployment_new_data)
+```
+### Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+  
+  
+  
+## problem 3
+```{r}
+popbabynames_data = read_csv(file = "./data/Popular_Baby_Names.csv")%>% 
+  janitor::clean_names()%>%
+  mutate(childs_first_name=str_to_lower(childs_first_name),)%>%
+   distinct(year_of_birth, gender, ethnicity, childs_first_name, count, rank, .keep_all=TRUE)
+```
+
+
+```{r}
+olivia_rank=filter(popbabynames_data, childs_first_name == "olivia")
+```
+```{r}
+popmale_rank=filter(popbabynames_data, gender == "MALE")
+```
+
+```{r}
+scatterplot_df=filter(popbabynames_data, gender == "MALE", year_of_birth=="2016", ethnicity=="WHITE NON HISPANIC")
+
+ggplot(scatterplot_df, aes(x = rank, y = count)) + geom_point()
+```
+
+male, white non-hispanic children born in 201
+
+  spread(year, month)
+
+  spread(year, condition, Jan:Feb:Mar:Apr:May:Jun:Jul:Aug:Sep:Oct:Nov:Dec, factor_key=TRUE)
+
+trash_data = janitor::clean_names(litters_data)
+    range = "A1:D7")
+
+write_csv(mlb11_data_subset, path = "./data/mlb_subset.csv")
