@@ -14,40 +14,65 @@ library(dplyr)
 
 ```{r}
 trash_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel",
-                 range= cell_cols("A:N"))%>%
+                 range= cell_cols("A2:N408"))%>%
                 janitor::clean_names()%>%
   drop_na(dumpster)%>%
-  mutate(sports_balls=round(sports_balls, digit=0))%>%
-  as.integer(sports_balls)
-
-                      
+  mutate(sports_balls=round(sports_balls, digit=0), sports_balls_new=as.integer(sports_balls))
 ```
+## load and clean precipitation data 
 
 ```{r}
-prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2017 Precipitation", range = cell_cols("A:B")) %>%
+prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2017 Precipitation", skip=1) %>%
   janitor::clean_names() %>%
-  mutate("year"='2017')
+  mutate("year"='2017')%>%
+  drop_na()
+
 ```
 
 ```{r}
-prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2018 Precipitation", range = cell_cols("A:B")) %>%
+prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2018 Precipitation", skip=1) %>%
   janitor::clean_names() %>%
-  mutate(year='2018')
+  mutate("year"='2018')%>%
+  drop_na()
+
 ```
+
+lotr_tidy = 
+  bind_rows(fellowship_ring, two_towers, return_king) %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    female:male,
+    names_to = "sex", 
+    values_to = "words") %>%
+  mutate(race = str_to_lower(race)) %>% 
+  select(movie, everything()) 
+
 
 ```{r}
-prec_data_new=  left_join(prec_data_2017, prec_data_2018, by = "Month")
-month.name
+  prec_data_new = 
+  bind_rows(prec_data_2017, prec_data_2018) %>%
+  mutate(month = month.name [month] )
 ```
-The number of observations in the dataset (trash_data) is 'r nrow (trash_data)'. 
 
-The number of observations in the dataset (prec_data_new) is 'r nrow (prec_data_new)'. 
+prec_data_new = 
+  bind_rows(prec_data_2017, prec_data_2018) %>%
+  
+prec_data_join=full_join(prec_data_2017, prec_data_2018)%>%
+  mutate(month = month.name [month] )
+```
+
+
+
+
+The number of observations in the dataset (trash_data) is `r nrow (trash_data)`
+
+The number of observations in the dataset (prec_data_new) is `r nrow (prec_data_new)` 
 
 the key variables in the dataset 
 
-the total precipitation in 2018 
+the total precipitation in 2018 is `r sum(pull(prec_data_2018,total))`
 
-the median number of sports balls in a dumpster in 2017 is 
+the median number of sports balls in a dumpster in 2017 is `r median(pull(trash_data,sports_balls))`
 
 ## problem 2
 ## Load in the fivethrityeight data
@@ -69,17 +94,15 @@ select("year", "month","close")
 
 ```{r}
 unemployment_data = read_csv(file = "./data/unemployment.csv")%>% 
-    janitor::clean_names()
-```
-
+    janitor::clean_names() 
+```  
 ```{r}
 unemployment_new_data = 
-pivot_longer(unemployment_data,Jan:Dec,names_to = "month", values_to = "%_of_unemployment")%>%
-  janitor::clean_names()
+pivot_longer(unemployment_data, jan:dec,names_to = "month", values_to = "%_of_unemployment")
 ```
 
 ```{r}
-polsmonth_snp_new=full_join(polsmonth_data, snp_data)
+polsmonth_snp_new=full_join(polsmonth_data, snp_data, by ="month")
 ```
 
 ```{r}
