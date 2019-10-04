@@ -138,7 +138,7 @@ knitr::kable(olivia_rank)
 ```{r}
 popmale_rank=filter(popbabynames_data, gender == "male", rank == "1")%>%
  select(gender,ethnicity, rank, childs_first_name,year_of_birth)%>%
-pivot_wider(names_from = "year_of_birth", values_from = "rank")
+pivot_wider(names_from = "year_of_birth", values_from = "childs_first_name")
 knitr::kable(popmale_rank)
 
 ```
