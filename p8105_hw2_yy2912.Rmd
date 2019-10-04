@@ -3,8 +3,7 @@ title: "p8105_hw2_yy2912.Rmd"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
 library(tidyverse)
 library(readxl)
 library(dplyr)
@@ -130,6 +129,7 @@ olivia_rank=filter(popbabynames_data, gender == "female", childs_first_name == "
 select(ethnicity, rank, year_of_birth)%>%
 pivot_wider(names_from = "year_of_birth", values_from = "rank")
 ```
+ 
 
 ```{r}
 popmale_rank=filter(popbabynames_data, gender == "male", rank == "1")%>%
