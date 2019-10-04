@@ -92,7 +92,10 @@ polsmonth_snp_new=left_join(polsmonth_data, snp_data, by =c("year", "month"))
 ```{r}
 unemployment_pols_snp_new=left_join(polsmonth_snp_new,unemployment_new_data, by =c("year", "month"))
 ```
-### Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+### pols-month dataset contains information on , the dataset has 822 observations, 13 variables, the years range from 1947-2015. Some key variables in this dataset include year, month, and presdient.
+snp_data dataset contains information on    , the dataset has 787 observations, 3 variables, the years range from 1-12. some key variables include year and month.
+unemployment dataset contains information on   , the dataset has 
+and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
   
   
   
