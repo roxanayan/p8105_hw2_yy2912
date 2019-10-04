@@ -11,7 +11,6 @@ library(dplyr)
 ```
 ## problem 1
 ## Load in the trash data
-
 ```{r}
 trash_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel",
                  range= cell_cols("A2:N408"))%>%
@@ -20,7 +19,6 @@ trash_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", shee
   mutate(sports_balls=round(sports_balls, digit=0), sports_balls_new=as.integer(sports_balls))
 ```
 ## read and clean precipitation data from 2017 and 2018
-
 ```{r}
 prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2017 Precipitation", range = "A2:B14") %>%
   janitor::clean_names() %>%
@@ -37,14 +35,11 @@ prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
 
 ```
 
-
 ```{r}
   prec_data_new = 
   bind_rows(prec_data_2017, prec_data_2018) %>%
   mutate(month = month.name [month] )
 ```
-
-
 
 The number of observations in the dataset (trash_data) is `r nrow (trash_data)`
 
@@ -60,11 +55,11 @@ the median number of sports balls in a dumpster in 2017 is `r median(pull(trash_
 
 ## problem 2
 ## Load in the fivethrityeight data
-
 ```{r}
 polsmonth_data = read_csv(file = "./data/pols-month.csv")%>% 
 separate(mon, into=c("year", "month", "day"))%>% 
-mutate(month_numeric=as.numeric(month),month_pols=month.name[month_numeric],president='gop','dem')%>% select(-prez_dem, -prez_gop, -day)
+mutate(month_numeric=as.numeric(month),month_pols=month.name[month_numeric],president=ifelse(prez_gop, 'gop','dem'))%>% 
+select(-prez_dem, -prez_gop, -day)
 
 ```
 
@@ -87,6 +82,7 @@ unemployment_new_data =
 pivot_longer(unemployment_data, jan:dec,names_to = "month", values_to = "%_of_unemployment")
 ```
 
+##join the three cleaned data
 ```{r}
 polsmonth_snp_new=left_join(polsmonth_data, snp_data, by =c("year", "month"))
 ```
@@ -94,7 +90,7 @@ polsmonth_snp_new=left_join(polsmonth_data, snp_data, by =c("year", "month"))
 ```{r}
 unemployment_pols_snp_new=left_join(polsmonth_snp_new,unemployment_new_data, by =c("year", "month"))
 ```
-### 
+
 The pols-month dataset has `r ncol(polsmonth_data)` variables and `r nrow(polsmonth_data)` row. The years range from `r min(pull(polsmonth_data, year))` to `r max(pull(polsmonth_data, year))`. 
 The variables in this dataset include `r names(polsmonth_data)`.
 Some key variables in this dataset include presdient, gov_gop,sen_gop,rep_gop, and gov_dem,sen_dem,rep_dem. 
@@ -142,7 +138,7 @@ pivot_wider(names_from = "year_of_birth", values_from = "rank")
 
 ```
 
-
+##create a scatterplot showing the number of children with a name against the rank in popularity of that name for male, white non-hispanic in 2016.
 ```{r}
 scatterplot_df=filter(popbabynames_data, gender == "male", year_of_birth=="2016", ethnicity=="white non hispanic")
 
