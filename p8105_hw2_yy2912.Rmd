@@ -104,7 +104,7 @@ and describe the resulting dataset (e.g. give the dimension, range of years, and
 ```{r}
 popbabynames_data = read_csv(file = "./data/Popular_Baby_Names.csv")%>% 
   janitor::clean_names()%>%
-  mutate(gender=str_to_lower(childs_first_name),
+  mutate(gender=str_to_lower(gender),
     childs_first_name=str_to_lower(childs_first_name),
     ethnicity = str_to_lower(ethnicity),
     ethnicity = replace (ethnicity, ethnicity == "ASIAN AND PACI", "ASIAN AND PACIFIC ISLANDER"),
@@ -117,13 +117,13 @@ popbabynames_data = read_csv(file = "./data/Popular_Baby_Names.csv")%>%
 
 
 ```{r}
-olivia_rank=filter(popbabynames_data, gender == "female", childs_first_name == "olivia")
+olivia_rank=filter(popbabynames_data, gender == "female", childs_first_name == "olivia")%>%
 select(ethnicity, rank, year_of_birth)%>%
 pivot_wider(names_from = "year_of_birth", values_from = "rank")
 ```
 
 ```{r}
-popmale_rank=filter(popbabynames_data, gender == "male")%>%
+popmale_rank=filter(popbabynames_data, gender == "male", rank == "1")%>%
  select(gender,ethnicity, rank, childs_first_name,year_of_birth)%>%
 pivot_wider(names_from = "year_of_birth", values_from = "rank")
 ```
@@ -141,13 +141,4 @@ scatterplot_df=filter(popbabynames_data, gender == "male", year_of_birth=="2016"
 ggplot(scatterplot_df, aes(x = rank, y = count)) + geom_point()
 ```
 
-male, white non-hispanic children born in 201
 
-  spread(year, month)
-
-  spread(year, condition, Jan:Feb:Mar:Apr:May:Jun:Jul:Aug:Sep:Oct:Nov:Dec, factor_key=TRUE)
-
-trash_data = janitor::clean_names(litters_data)
-    range = "A1:D7")
-
-write_csv(mlb11_data_subset, path = "./data/mlb_subset.csv")
