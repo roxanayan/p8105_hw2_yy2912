@@ -48,11 +48,13 @@ prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
 
 The number of observations in the dataset (trash_data) is `r nrow (trash_data)`
 
+The key variables in the dataset include weight_tons and volume_cubic_yards.
+
 The number of observations in the dataset (prec_data_new) is `r nrow (prec_data_new)` 
 
-the key variables in the dataset 
+The key variables in the dataset include month, total, and year. 
 
-the total precipitation in 2018 is `r sum(pull(prec_data_2018,total))`
+For available data,the total precipitation in 2018 is `r sum(pull(prec_data_2018,total))`
 
 the median number of sports balls in a dumpster in 2017 is `r median(pull(trash_data,sports_balls))`
 
@@ -93,11 +95,22 @@ polsmonth_snp_new=left_join(polsmonth_data, snp_data, by =c("year", "month"))
 unemployment_pols_snp_new=left_join(polsmonth_snp_new,unemployment_new_data, by =c("year", "month"))
 ```
 ### 
-pols-month dataset contains information on , the dataset has 822 observations, 13 variables, the years range from 1947-2015. Some key variables in this dataset include year, month, and presdient.
-snp_data dataset contains information on    , the dataset has 787 observations, 3 variables, the years range from 1-12. some key variables include year and month.
-unemployment dataset contains information on   , the dataset has 
-and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
-  
+The pols-month dataset has `r ncol(polsmonth_data)` variables and `r nrow(polsmonth_data)` row. The years range from `r min(pull(polsmonth_data, year))` to `r max(pull(polsmonth_data, year))`. 
+The variables in this dataset include `r names(polsmonth_data)`.
+Some key variables in this dataset include presdient, gov_gop,sen_gop,rep_gop, and gov_dem,sen_dem,rep_dem. 
+
+The snp_data dataset has `r ncol(snp_data)` variables and `r nrow(snp_data)` rows. The years range from `r min(pull(snp_data, year))` to `r max(pull(snp_data, year))`. 
+The variables in this dataset include `r names(snp_data)`.
+Some key variables in this dataset include close. 
+
+The unemployment dataset has `r ncol(unemployment_new_data)` variables and `r nrow(unemployment_new_data)` rows. The years range from `r min(pull(unemployment_new_data, year))` to `r max(pull(unemployment_new_data, year))`. 
+The variables in this dataset include `r names(unemployment_new_data)`.
+Some key variables in this dataset include % of unemployment. 
+
+The merged dataset has `r ncol(unemployment_pols_snp_new)` variables and `r nrow(unemployment_pols_snp_new)` rows.
+The range of years in the resulting dataset is from `r min(pull(unemployment_pols_snp_new, year))` to `r max(pull(unemployment_pols_snp_new, year))`.
+Some key variables in this dataset include presdient, gov_gop,sen_gop,rep_gop, and gov_dem,sen_dem,rep_dem, close, and % of unemployment. 
+
   
   
 ## problem 3
@@ -126,13 +139,8 @@ pivot_wider(names_from = "year_of_birth", values_from = "rank")
 popmale_rank=filter(popbabynames_data, gender == "male", rank == "1")%>%
  select(gender,ethnicity, rank, childs_first_name,year_of_birth)%>%
 pivot_wider(names_from = "year_of_birth", values_from = "rank")
+
 ```
-
-ethan_pivot=
-    filter(popbabynames_data, gender == "MALE", rank =="1")%>%
-  select(gender,ethnicity, rank, childs_first_name,year_of_birth)%>%
-pivot_wider(names_from = "year_of_birth", values_from = "rank")
-
 
 
 ```{r}
