@@ -19,10 +19,10 @@ trash_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", shee
   drop_na(dumpster)%>%
   mutate(sports_balls=round(sports_balls, digit=0), sports_balls_new=as.integer(sports_balls))
 ```
-## load and clean precipitation data 
+## read and clean precipitation data from 2017 and 2018
 
 ```{r}
-prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2017 Precipitation", skip=1) %>%
+prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2017 Precipitation", range = "A2:B14") %>%
   janitor::clean_names() %>%
   mutate("year"='2017')%>%
   drop_na()
@@ -30,7 +30,7 @@ prec_data_2017=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",she
 ```
 
 ```{r}
-prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2018 Precipitation", skip=1) %>%
+prec_data_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet="2018 Precipitation", range = "A2:B14") %>%
   janitor::clean_names() %>%
   mutate("year"='2018')%>%
   drop_na()
@@ -61,14 +61,14 @@ the median number of sports balls in a dumpster in 2017 is `r median(pull(trash_
 
 ```{r}
 polsmonth_data = read_csv(file = "./data/pols-month.csv")%>% 
-separate(mon, c("year", "month", "day"))%>% 
+separate(mon, into=c("year", "month", "day"))%>% 
 mutate(month_numeric=as.numeric(month),month_pols=month.name[month_numeric],president='gop','dem')%>% select(-prez_dem, -prez_gop, -day)
 
 ```
 
 ```{r}
 snp_data = read_csv(file = "./data/snp.csv")%>% 
-separate(date, c("year", "month", "day"))%>%
+separate(date, into=c("year", "month", "day"))%>%
 mutate(month=month.name[month_numeric=as.numeric(month)])%>% 
 select(-day)%>%
 select("year", "month","close")
@@ -92,7 +92,8 @@ polsmonth_snp_new=left_join(polsmonth_data, snp_data, by =c("year", "month"))
 ```{r}
 unemployment_pols_snp_new=left_join(polsmonth_snp_new,unemployment_new_data, by =c("year", "month"))
 ```
-### pols-month dataset contains information on , the dataset has 822 observations, 13 variables, the years range from 1947-2015. Some key variables in this dataset include year, month, and presdient.
+### 
+pols-month dataset contains information on , the dataset has 822 observations, 13 variables, the years range from 1947-2015. Some key variables in this dataset include year, month, and presdient.
 snp_data dataset contains information on    , the dataset has 787 observations, 3 variables, the years range from 1-12. some key variables include year and month.
 unemployment dataset contains information on   , the dataset has 
 and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
@@ -103,20 +104,39 @@ and describe the resulting dataset (e.g. give the dimension, range of years, and
 ```{r}
 popbabynames_data = read_csv(file = "./data/Popular_Baby_Names.csv")%>% 
   janitor::clean_names()%>%
-  mutate(childs_first_name=str_to_lower(childs_first_name),)%>%
+  mutate(gender=str_to_lower(childs_first_name),
+    childs_first_name=str_to_lower(childs_first_name),
+    ethnicity = str_to_lower(ethnicity),
+    ethnicity = replace (ethnicity, ethnicity == "ASIAN AND PACI", "ASIAN AND PACIFIC ISLANDER"),
+    ethnicity = replace (ethnicity, ethnicity == "BLACK NON HISP", "BLACK NON HISPANIC"),
+    ethnicity = replace (ethnicity, ethnicity == "WHITE NON HISP", "WHITE NON HISPANIC")
+   )%>%
+        
    distinct(year_of_birth, gender, ethnicity, childs_first_name, count, rank, .keep_all=TRUE)
 ```
 
 
 ```{r}
-olivia_rank=filter(popbabynames_data, childs_first_name == "olivia")
-```
-```{r}
-popmale_rank=filter(popbabynames_data, gender == "MALE")
+olivia_rank=filter(popbabynames_data, gender == "female", childs_first_name == "olivia")
+select(ethnicity, rank, year_of_birth)%>%
+pivot_wider(names_from = "year_of_birth", values_from = "rank")
 ```
 
 ```{r}
-scatterplot_df=filter(popbabynames_data, gender == "MALE", year_of_birth=="2016", ethnicity=="WHITE NON HISPANIC")
+popmale_rank=filter(popbabynames_data, gender == "male")%>%
+ select(gender,ethnicity, rank, childs_first_name,year_of_birth)%>%
+pivot_wider(names_from = "year_of_birth", values_from = "rank")
+```
+
+ethan_pivot=
+    filter(popbabynames_data, gender == "MALE", rank =="1")%>%
+  select(gender,ethnicity, rank, childs_first_name,year_of_birth)%>%
+pivot_wider(names_from = "year_of_birth", values_from = "rank")
+
+
+
+```{r}
+scatterplot_df=filter(popbabynames_data, gender == "male", year_of_birth=="2016", ethnicity=="white non hispanic")
 
 ggplot(scatterplot_df, aes(x = rank, y = count)) + geom_point()
 ```
